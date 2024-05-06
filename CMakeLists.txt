@@ -17,6 +17,10 @@ file(GLOB_RECURSE lusol_srcs "commonlib.c" "hbio.c" "lusol.c" "lusolio.c" "lusol
 # set the target executable
 add_library(lusol SHARED ${lusol_srcs})
 
+# special handling: lusol sources need to ignore some warnings
+set_source_files_properties("hbio.c" PROPERTIES COMPILE_FLAGS -Wno-error)
+set_source_files_properties("mmio.c" PROPERTIES COMPILE_FLAGS -Wno-error)
+
 # set properties of lusol
 set_target_properties(lusol PROPERTIES ARCHIVE_OUTPUT_DIRECTORY lib)
 

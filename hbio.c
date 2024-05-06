@@ -223,6 +223,11 @@ char* substr(const char* S, const int pos, const int len);
 void upcase(char* S);
 void IOHBTerminate(char* message);
 
+void rose_fgets(char* s, int n, FILE* fp)
+{
+    char* p = fgets(s, n, fp);
+}
+
 int readHB_info(const char* filename, int* M, int* N, int* nz, char** Type, int* Nrhs)
 {
     /****************************************************************************/
@@ -299,7 +304,7 @@ int readHB_header(FILE* in_file, char* Title, char* Key, char* Type, int* Nrow, 
     char line[BUFSIZ];
 
     /*  First line:   */
-    fgets(line, BUFSIZ, in_file);
+    rose_fgets(line, BUFSIZ, in_file);
     if (sscanf(line, "%*s") < 0)
         IOHBTerminate("iohb.c: Null (or blank) first line of HB file.\n");
     (void)sscanf(line, "%72c%8[^\n]", Title, Key);
@@ -307,7 +312,7 @@ int readHB_header(FILE* in_file, char* Title, char* Key, char* Type, int* Nrow, 
     *(Title + 72) = 0;  // (char)NULL;
 
     /*  Second line:  */
-    fgets(line, BUFSIZ, in_file);
+    rose_fgets(line, BUFSIZ, in_file);
     if (sscanf(line, "%*s") < 0)
         IOHBTerminate("iohb.c: Null (or blank) second line of HB file.\n");
     if (sscanf(line, "%i", &Totcrd) != 1)
@@ -322,7 +327,7 @@ int readHB_header(FILE* in_file, char* Title, char* Key, char* Type, int* Nrow, 
         *Rhscrd = 0;
 
     /*  Third line:   */
-    fgets(line, BUFSIZ, in_file);
+    rose_fgets(line, BUFSIZ, in_file);
     if (sscanf(line, "%*s") < 0)
         IOHBTerminate("iohb.c: Null (or blank) third line of HB file.\n");
     if (sscanf(line, "%3c", Type) != 1)
@@ -338,7 +343,7 @@ int readHB_header(FILE* in_file, char* Title, char* Key, char* Type, int* Nrow, 
         Neltvl = 0;
 
     /*  Fourth line:  */
-    fgets(line, BUFSIZ, in_file);
+    rose_fgets(line, BUFSIZ, in_file);
     if (sscanf(line, "%*s") < 0)
         IOHBTerminate("iohb.c: Null (or blank) fourth line of HB file.\n");
     if (sscanf(line, "%16c", Ptrfmt) != 1)
@@ -356,7 +361,7 @@ int readHB_header(FILE* in_file, char* Title, char* Key, char* Type, int* Nrow, 
     /*  (Optional) Fifth line: */
     if (*Rhscrd != 0)
     {
-        fgets(line, BUFSIZ, in_file);
+        rose_fgets(line, BUFSIZ, in_file);
         if (sscanf(line, "%*s") < 0)
             IOHBTerminate("iohb.c: Null (or blank) fifth line of HB file.\n");
         if (sscanf(line, "%3c", Rhstype) != 1)
@@ -430,7 +435,7 @@ int readHB_mat_double(const char* filename, int colptr[], int rowind[], double v
     count = 0;
     for (i = 0; i < Ptrcrd; i++)
     {
-        fgets(line, BUFSIZ, in_file);
+        rose_fgets(line, BUFSIZ, in_file);
         if (sscanf(line, "%*s") < 0)
             IOHBTerminate("iohb.c: Null (or blank) line in pointer data region of HB file.\n");
         col = 0;
@@ -456,7 +461,7 @@ int readHB_mat_double(const char* filename, int colptr[], int rowind[], double v
     count = 0;
     for (i = 0; i < Indcrd; i++)
     {
-        fgets(line, BUFSIZ, in_file);
+        rose_fgets(line, BUFSIZ, in_file);
         if (sscanf(line, "%*s") < 0)
             IOHBTerminate("iohb.c: Null (or blank) line in index data region of HB file.\n");
         col = 0;
@@ -490,7 +495,7 @@ int readHB_mat_double(const char* filename, int colptr[], int rowind[], double v
         count = 0;
         for (i = 0; i < Valcrd; i++)
         {
-            fgets(line, BUFSIZ, in_file);
+            rose_fgets(line, BUFSIZ, in_file);
             if (sscanf(line, "%*s") < 0)
                 IOHBTerminate("iohb.c: Null (or blank) line in value data region of HB file.\n");
             if (Valflag == 'D')
@@ -660,7 +665,7 @@ int readHB_aux_double(const char* filename, const char AuxType, double b[])
     n = Ptrcrd + Indcrd + Valcrd;
 
     for (i = 0; i < n; i++)
-        fgets(line, BUFSIZ, in_file);
+        rose_fgets(line, BUFSIZ, in_file);
 
     /*  start  - number of initial aux vector entries to skip   */
     /*           to reach first  vector requested               */
@@ -674,7 +679,7 @@ int readHB_aux_double(const char* filename, const char AuxType, double b[])
         start = (nvecs - 1) * Nentries;
     stride = (nvecs - 1) * Nentries;
 
-    fgets(line, BUFSIZ, in_file);
+    rose_fgets(line, BUFSIZ, in_file);
     linel = strchr(line, '\n') - line;
     col = 0;
     /*  Skip to initial offset */
@@ -683,7 +688,7 @@ int readHB_aux_double(const char* filename, const char AuxType, double b[])
     {
         if (col >= (maxcol < linel ? maxcol : linel))
         {
-            fgets(line, BUFSIZ, in_file);
+            rose_fgets(line, BUFSIZ, in_file);
             linel = strchr(line, '\n') - line;
             col = 0;
         }
@@ -709,7 +714,7 @@ int readHB_aux_double(const char* filename, const char AuxType, double b[])
         {
             if (col >= (maxcol < linel ? maxcol : linel))
             {
-                fgets(line, BUFSIZ, in_file);
+                rose_fgets(line, BUFSIZ, in_file);
                 linel = strchr(line, '\n') - line;
                 if (Rhsflag == 'D')
                 {
@@ -744,7 +749,7 @@ int readHB_aux_double(const char* filename, const char AuxType, double b[])
         {
             if (col >= (maxcol < linel ? maxcol : linel))
             {
-                fgets(line, BUFSIZ, in_file);
+                rose_fgets(line, BUFSIZ, in_file);
                 linel = strchr(line, '\n') - line;
                 col = 0;
             }
@@ -1079,7 +1084,7 @@ int readHB_mat_char(const char* filename, int colptr[], int rowind[], char val[]
     count = 0;
     for (i = 0; i < Ptrcrd; i++)
     {
-        fgets(line, BUFSIZ, in_file);
+        rose_fgets(line, BUFSIZ, in_file);
         if (sscanf(line, "%*s") < 0)
             IOHBTerminate("iohb.c: Null (or blank) line in pointer data region of HB file.\n");
         col = 0;
@@ -1105,7 +1110,7 @@ int readHB_mat_char(const char* filename, int colptr[], int rowind[], char val[]
     count = 0;
     for (i = 0; i < Indcrd; i++)
     {
-        fgets(line, BUFSIZ, in_file);
+        rose_fgets(line, BUFSIZ, in_file);
         if (sscanf(line, "%*s") < 0)
             IOHBTerminate("iohb.c: Null (or blank) line in index data region of HB file.\n");
         col = 0;
@@ -1139,7 +1144,7 @@ int readHB_mat_char(const char* filename, int colptr[], int rowind[], char val[]
         count = 0;
         for (i = 0; i < Valcrd; i++)
         {
-            fgets(line, BUFSIZ, in_file);
+            rose_fgets(line, BUFSIZ, in_file);
             if (sscanf(line, "%*s") < 0)
                 IOHBTerminate("iohb.c: Null (or blank) line in value data region of HB file.\n");
             if (Valflag == 'D')
@@ -1323,7 +1328,7 @@ int readHB_aux_char(const char* filename, const char AuxType, char b[])
     n = Ptrcrd + Indcrd + Valcrd;
 
     for (i = 0; i < n; i++)
-        fgets(line, BUFSIZ, in_file);
+        rose_fgets(line, BUFSIZ, in_file);
 
     /*  start  - number of initial aux vector entries to skip   */
     /*           to reach first  vector requested               */
@@ -1337,7 +1342,7 @@ int readHB_aux_char(const char* filename, const char AuxType, char b[])
         start = (nvecs - 1) * Nentries;
     stride = (nvecs - 1) * Nentries;
 
-    fgets(line, BUFSIZ, in_file);
+    rose_fgets(line, BUFSIZ, in_file);
     linel = strchr(line, '\n') - line;
     if (sscanf(line, "%*s") < 0)
         IOHBTerminate("iohb.c: Null (or blank) line in auxillary vector data region of HB file.\n");
@@ -1349,7 +1354,7 @@ int readHB_aux_char(const char* filename, const char AuxType, char b[])
         col += Rhswidth;
         if (col >= (maxcol < linel ? maxcol : linel))
         {
-            fgets(line, BUFSIZ, in_file);
+            rose_fgets(line, BUFSIZ, in_file);
             linel = strchr(line, '\n') - line;
             if (sscanf(line, "%*s") < 0)
                 IOHBTerminate("iohb.c: Null (or blank) line in auxillary vector data region of HB file.\n");
@@ -1372,7 +1377,7 @@ int readHB_aux_char(const char* filename, const char AuxType, char b[])
         {
             if (col >= (maxcol < linel ? maxcol : linel))
             {
-                fgets(line, BUFSIZ, in_file);
+                rose_fgets(line, BUFSIZ, in_file);
                 linel = strchr(line, '\n') - line;
                 if (sscanf(line, "%*s") < 0)
                     IOHBTerminate("iohb.c: Null (or blank) line in auxillary vector data region of HB file.\n");
@@ -1410,7 +1415,7 @@ int readHB_aux_char(const char* filename, const char AuxType, char b[])
             col += Rhswidth;
             if (col >= (maxcol < linel ? maxcol : linel))
             {
-                fgets(line, BUFSIZ, in_file);
+                rose_fgets(line, BUFSIZ, in_file);
                 linel = strchr(line, '\n') - line;
                 if (sscanf(line, "%*s") < 0)
                     IOHBTerminate("iohb.c: Null (or blank) line in auxillary vector data region of HB file.\n");
